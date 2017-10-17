@@ -1,7 +1,7 @@
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
-#include <hexstocks>
+// #include <hexstocks>
 #include <airdrop>
 
 #pragma semicolon 1
@@ -47,13 +47,12 @@ public void OnPluginStart()
 	Array_BoxRunningEntZ = new ArrayList(64);
 	
 	//HookEvents
-	HookEvent("round_start", Event_RoundStart);
+	HookEvent("teamplay_round_start", Event_RoundStart);
 	
-	//Prepare AutoExecConfig
-	AutoExecConfig(true);
+	// AutoExecConfig(true);
 	
-	cv_sBoxPath = CreateConVar("sm_airdrop_box", "models/props_crates/static_crate_40.mdl", "Path of the box in the airdrop");
-	cv_sParaPath = CreateConVar("sm_airdrop_parachute", "models/parachute/parachute_ark.mdl", "Path of the paracute in the airdrop");
+	cv_sBoxPath = CreateConVar("sm_airdrop_box", "models/props_lakeside/wood_crate_01.mdl", "Path of the box in the airdrop");
+	cv_sParaPath = CreateConVar("sm_airdrop_parachute", "models/workshop/weapons/c_models/c_paratooper_pack/c_paratrooper_parachute.mdl", "Path of the paracute in the airdrop");
 	cv_fMaxDistance = CreateConVar("sm_airdrop_max_distance", "350.0", "The max distance that a box can be pressed", _, true, 0.0);
 	cv_fLandDistance = CreateConVar("sm_airdrop_landing_zone", "75.0", "N - Prevent player going into the Box Landing Zone to avoid them to compenetrait when the box. 0 - Disable", _, true, 0.0);
 	
@@ -140,7 +139,7 @@ public int CallAirDrop(float vBoxOrigin[3], bool bCallForward)
 	
 	int iBoxEnt = SpawnBox(vBoxOrigin);
 	
-	vBoxOrigin[2] -= 30.0;
+	vBoxOrigin[2] += 30.0;
 	
 	int iParaEnt = SpawnParachute(vBoxOrigin);
 	
@@ -210,7 +209,7 @@ public Action OnPlayerRunCmd(int client, int &buttons)
 {
 	CheckDistance();
 	
-	if (IsPlayerAlive(client) && (buttons & IN_USE) && GetArraySize(Array_BoxEnt) != 0)
+	if (IsPlayerAlive(client) && (buttons & IN_RELOAD) && GetArraySize(Array_BoxEnt) != 0)
 	{
 		int iEnt = GetClientAimTarget(client, false);
 		
@@ -346,6 +345,11 @@ void KnockbackSetVelocity(int client, const float startpoint[3], const float end
 	
 	
 	TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, vector);
+}
+
+stock void GetEntityOrigin(int entity, float origin[3])
+{
+	GetEntPropVector(entity, Prop_Send, "m_vecOrigin", origin);
 }
 
 
